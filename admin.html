@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - Shiva</title>
+<style>
+body{background:#0f172a;color:white;font-family:Arial;padding:15px;margin:0}
+.box{max-width:800px;margin:auto;background:#1e293b;padding:20px;border-radius:12px}
+input,textarea{width:100%;padding:10px;margin:6px 0;background:#0f172a;border:1px solid #334155;color:white;border-radius:6px;box-sizing:border-box}
+button{padding:10px 15px;background:#22c55e;color:white;border:none;border-radius:6px;font-weight:bold;cursor:pointer;margin:5px 2px}
+button:hover{opacity:0.9}
+.hidden{display:none}
+.tabBtn{background:#334155}
+.tabBtn.active{background:#22c55e}
+.section{border:1px solid #334155;padding:15px;border-radius:8px;margin:10px 0}
+.smallBtn{width:auto;font-size:12px;padding:6px 10px}
+.del{background:#ef4444}
+</style>
+</head>
+<body>
+
+<div id="loginBox" class="box" style="max-width:400px;margin-top:80px;text-align:center">
+<h2>Admin Login</h2>
+<input type="password" id="pass" placeholder="Enter Password">
+<button onclick="login()" style="width:100%">Login</button>
+<p id="err" style="color:#ef4444"></p>
+</div>
+
+<div id="adminBox" class="box hidden">
+<h2 style="text-align:center">Shiva Mani - Full Portfolio Admin</h2>
+
+<div style="text-align:center;margin-bottom:15px">
+<button class="tabBtn active" onclick="showTab('home')">Home</button>
+<button class="tabBtn" onclick="showTab('about')">About</button>
+<button class="tabBtn" onclick="showTab('skills')">Skills</button>
+<button class="tabBtn" onclick="showTab('edu')">Education</button>
+<button class="tabBtn" onclick="showTab('projects')">Projects</button>
+<button class="tabBtn" onclick="showTab('services')">Services</button>
+<button class="tabBtn" onclick="showTab('contact')">Contact</button>
+</div>
+
+<div id="tab-home" class="tab">
+<h3>Home Section</h3>
+<input id="home_name" placeholder="Full Name - ex: Gummi Shiva Mani">
+<input id="home_role" placeholder="Role - ex: Full Stack Developer">
+<textarea id="home_tagline" placeholder="Tagline - ex: I build amazing websites..."></textarea>
+<input id="home_img" placeholder="Hero Image URL">
+</div>
+
+<div id="tab-about" class="tab hidden">
+<h3>About Section</h3>
+<textarea id="about_text" rows="5" placeholder="About You - Your story..."></textarea>
+<input id="about_img" placeholder="About Image URL">
+<input id="about_resume" placeholder="Resume Link (PDF URL)">
+</div>
+
+<div id="tab-skills" class="tab hidden">
+<h3>Skills</h3>
+<div style="display:flex;gap:5px">
+<input id="skill_name" placeholder="Skill - ex: React" style="flex:1">
+<input id="skill_per" placeholder="% - ex: 90" style="width:80px">
+<button onclick="addSkill()">Add</button>
+</div>
+<div id="skillsList"></div>
+</div>
+
+<div id="tab-edu" class="tab hidden">
+<h3>Education</h3>
+<input id="edu_degree" placeholder="Degree - ex: B.Tech CSE">
+<input id="edu_clg" placeholder="College - ex: JNTU Hyderabad">
+<input id="edu_year" placeholder="Year - ex: 2020-2024">
+<textarea id="edu_desc" placeholder="Description"></textarea>
+<button onclick="addEdu()">+ Add Education</button>
+<div id="eduList"></div>
+</div>
+
+<div id="tab-projects" class="tab hidden">
+<h3>Projects</h3>
+<input id="p_title" placeholder="Project Title">
+<textarea id="p_desc" placeholder="Description"></textarea>
+<input id="p_github" placeholder="GitHub Link">
+<input id="p_demo" placeholder="Live Demo Link">
+<input id="p_img" placeholder="Image URL">
+<button onclick="addProject()">+ Add Project</button>
+<div id="projectsList"></div>
+</div>
+
+<div id="tab-services" class="tab hidden">
+<h3>Services</h3>
+<input id="s_title" placeholder="Service Title - ex: Web Development">
+<textarea id="s_desc" placeholder="Service Description"></textarea>
+<input id="s_icon" placeholder="Icon - ex: 💻 (emoji)">
+<button onclick="addService()">+ Add Service</button>
+<div id="servicesList"></div>
+</div>
+
+<div id="tab-contact" class="tab hidden">
+<h3>Contact Info</h3>
+<input id="c_email" placeholder="Email">
+<input id="c_phone" placeholder="Phone">
+<input id="c_location" placeholder="Location - ex: Hyderabad, India">
+<input id="c_github" placeholder="GitHub Profile URL">
+<input id="c_linkedin" placeholder="LinkedIn URL">
+<input id="c_insta" placeholder="Instagram URL">
+</div>
+
+<hr style="margin:20px 0;border-color:#334155">
+<button onclick="saveData()" style="width:100%;background:#22c55e;font-size:16px;padding:14px">💾 SAVE & Download data.json</button>
+<button onclick="logout()" style="width:100%;background:#475569">Logout</button>
+<p style="font-size:11px;color:#64748b;text-align:center;margin-top:10px">After save, upload data.json to GitHub. I will auto-connect to main site.</p>
+</div>
+
+<script>
+const MY_PASS="shiv@9912";
+let data=JSON.parse(localStorage.getItem('shivaPortfolioFull'))||{
+ home:{name:"Gummi Shiva Mani",role:"Full Stack Developer",tagline:"I build amazing websites",img:""},
+ about:{text:"I am a passionate developer",img:"",resume:""},
+ skills:[{name:"HTML",per:"90"},{name:"CSS",per:"85"}],
+ education:[],
+ projects:[],
+ services:[],
+ contact:{email:"",phone:"",location:"",github:"",linkedin:"",insta:""}
+};
+
+function login(){
+ if(document.getElementById('pass').value===MY_PASS){
+  document.getElementById('loginBox').classList.add('hidden');
+  document.getElementById('adminBox').classList.remove('hidden');
+  loadAll();
+ }else{document.getElementById('err').innerText="Wrong password!";}
+}
+function logout(){
+ document.getElementById('adminBox').classList.add('hidden');
+ document.getElementById('loginBox').classList.remove('hidden');
+ document.getElementById('pass').value="";
+}
+function showTab(t){
+ document.querySelectorAll('.tab').forEach(e=>e.classList.add('hidden'));
+ document.getElementById('tab-'+t).classList.remove('hidden');
+ document.querySelectorAll('.tabBtn').forEach(b=>b.classList.remove('active'));
+ event.target.classList.add('active');
+}
+function loadAll(){
+ document.getElementById('home_name').value=data.home.name;
+ document.getElementById('home_role').value=data.home.role;
+ document.getElementById('home_tagline').value=data.home.tagline;
+ document.getElementById('home_img').value=data.home.img;
+ document.getElementById('about_text').value=data.about.text;
+ document.getElementById('about_img').value=data.about.img;
+ document.getElementById('about_resume').value=data.about.resume;
+ document.getElementById('c_email').value=data.contact.email;
+ document.getElementById('c_phone').value=data.contact.phone;
+ document.getElementById('c_location').value=data.contact.location;
+ document.getElementById('c_github').value=data.contact.github;
+ document.getElementById('c_linkedin').value=data.contact.linkedin;
+ document.getElementById('c_insta').value=data.contact.insta;
+ renderSkills();renderEdu();renderProjects();renderServices();
+}
+function addSkill(){
+ let n=document.getElementById('skill_name').value, p=document.getElementById('skill_per').value;
+ if(!n)return; data.skills.push({name:n,per:p}); document.getElementById('skill_name').value="";document.getElementById('skill_per').value=""; saveLocal();renderSkills();
+}
+function renderSkills(){
+ let h="";data.skills.forEach((s,i)=>{h+=`<div class="section" style="display:flex;justify-content:space-between;padding:8px">${s.name} - ${s.per}% <button class="smallBtn del" onclick="data.skills.splice(${i},1);saveLocal();renderSkills()">Delete</button></div>`});document.getElementById('skillsList').innerHTML=h;
+}
+function addEdu(){
+ data.education.push({degree:edu_degree.value,clg:edu_clg.value,year:edu_year.value,desc:edu_desc.value});
+ edu_degree.value="";edu_clg.value="";edu_year.value="";edu_desc.value=""; saveLocal();renderEdu();
+}
+function renderEdu(){
+ let h="";data.education.forEach((e,i)=>{h+=`<div class="section">${e.degree} - ${e.clg} (${e.year}) <button class="smallBtn del" onclick="data.education.splice(${i},1);saveLocal();renderEdu()">Delete</button></div>`});document.getElementById('eduList').innerHTML=h;
+}
+function addProject(){
+ data.projects.push({title:p_title.value,description:p_desc.value,github:p_github.value,demo:p_demo.value,image:p_img.value});
+ p_title.value="";p_desc.value="";p_github.value="";p_demo.value="";p_img.value=""; saveLocal();renderProjects();
+}
+function renderProjects(){
+ let h="";data.projects.forEach((p,i)=>{h+=`<div class="section">${p.title} <button class="smallBtn del" onclick="data.projects.splice(${i},1);saveLocal();renderProjects()">Delete</button></div>`});document.getElementById('projectsList').innerHTML=h;
+}
+function addService(){
+ data.services.push({title:s_title.value,desc:s_desc.value,icon:s_icon.value});
+ s_title.value="";s_desc.value="";s_icon.value=""; saveLocal();renderServices();
+}
+function renderServices(){
+ let h="";data.services.forEach((s,i)=>{h+=`<div class="section">${s.icon} ${s.title} <button class="smallBtn del" onclick="data.services.splice(${i},1);saveLocal();renderServices()">Delete</button></div>`});document.getElementById('servicesList').innerHTML=h;
+}
+function saveLocal(){
+ data.home.name=home_name.value; data.home.role=home_role.value; data.home.tagline=home_tagline.value; data.home.img=home_img.value;
+ data.about.text=about_text.value; data.about.img=about_img.value; data.about.resume=about_resume.value;
+ data.contact.email=c_email.value; data.contact.phone=c_phone.value; data.contact.location=c_location.value; data.contact.github=c_github.value; data.contact.linkedin=c_linkedin.value; data.contact.insta=c_insta.value;
+ localStorage.setItem('shivaPortfolioFull',JSON.stringify(data));
+}
+function saveData(){
+ saveLocal();
+ let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download="data.json";a.click();
+ alert("data.json downloaded! Upload to GitHub now.");
+}
+</script>
+</body>
+</html>
