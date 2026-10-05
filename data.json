@@ -1,0 +1,9 @@
+{
+  "home": {"name": "Gummi Shiva Mani", "role": "Full Stack Developer", "tagline": "Hi, I'm Gummi Shiva Mani - I build amazing websites", "img": "profile.jpg"},
+  "about": {"text": "I am a passionate Full Stack Developer and Digital Marketer. I love building modern web apps.", "img": "profile.jpg", "resume": "resume.pdf"},
+  "skills": [{"name": "HTML", "per": "90"}, {"name": "CSS", "per": "85"}, {"name": "JavaScript", "per": "80"}, {"name": "React", "per": "75"}],
+  "education": [{"degree": "B.Tech CSE", "clg": "JNTU Hyderabad", "year": "2020-2024", "desc": "Computer Science"}],
+  "projects": [{"title": "Portfolio Website", "description": "My personal portfolio", "github": "https://github.com/shivamanireddy76010-dotcom/my-portfolio", "demo": "", "image": "profile.jpg"}],
+  "services": [{"title": "Web Development", "desc": "Modern responsive websites", "icon": "💻"}],
+  "contact": {"email": "shiva@gmail.com", "phone": "9912XXXXXX", "location": "Hyderabad, India", "github": "https://github.com/shivamanireddy76010-dotcom", "linkedin": "", "insta": ""}
+}
