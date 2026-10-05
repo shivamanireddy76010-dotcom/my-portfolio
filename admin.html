@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Panel - Shiva</title>
+<style>
+body{font-family: 'Segoe UI', sans-serif;background:#0f172a;color:white;padding:15px;margin:0}
+.login-box{max-width:380px;margin:80px auto;background:#1e293b;padding:30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.5);text-align:center}
+input,textarea{width:100%;padding:12px;margin:10px 0;background:#0f172a;border:1px solid #334155;color:white;border-radius:10px;box-sizing:border-box;outline:none}
+input:focus,textarea:focus{border-color:#38bdf8}
+button{width:100%;padding:13px;background:#3b82f6;border:none;color:white;border-radius:10px;font-weight:bold;cursor:pointer;margin-top:10px;font-size:15px}
+button:hover{background:#2563eb}
+.card{background:#1e293b;padding:15px;border-radius:12px;margin:12px 0;border-left:4px solid #38bdf8}
+.hidden{display:none}
+h1{color:#38bdf8}
+.badge{background:#0f172a;padding:5px 10px;border-radius:20px;font-size:12px;color:#94a3b8}
+</style>
+</head>
+<body>
+
+<div id="loginBox" class="login-box">
+<h2>🔒 Admin Login</h2>
+<p style="color:#94a3b8">Only Shiva Mani can access</p>
+<input type="password" id="pass" placeholder="Enter Password">
+<button onclick="login()">Login</button>
+<p id="err" style="color:#f87171;font-size:13px"></p>
+<p style="font-size:11px;color:#475569;margin-top:20px">Default: shiva123</p>
+</div>
+
+<div id="adminBox" class="hidden">
+<h1>Shiva Admin Panel 🔥</h1>
+<p class="badge">shivamanireddy76010-dotcom / my-portfolio</p>
+
+<h3>📝 About Me</h3>
+<textarea id="about" rows="4" placeholder="Nee gurinchi rayi bro..."></textarea>
+
+<h3>📄 Resume Link</h3>
+<input id="resume" placeholder="resume.pdf">
+
+<h3>🚀 Projects (<span id="count">0</span>)</h3>
+<div id="projectsList"></div>
+
+<div style="background:#1e293b;padding:15px;border-radius:12px;margin-top:20px">
+<h4 style="margin:0 0 10px 0">+ New Project Add Chey</h4>
+<input id="pTitle" placeholder="Project Title - ex: E-commerce Website">
+<textarea id="pDesc" rows="2" placeholder="Description"></textarea>
+<input id="pLink" placeholder="GitHub Link - https://github.com/...">
+<input id="pImg" placeholder="Image URL - https://... (lekapothe khali vadulu)">
+<button onclick="addProject()" style="background:#22c55e">+ Add Project</button>
+</div>
+
+<button style="background:#22c55e;margin-top:30px;font-size:16px" onclick="saveAll()">💾 SAVE & Download data.json</button>
+<button onclick="logout()" style="background:#334155;margin-top:10px">Logout</button>
+
+<p style="font-size:12px;color:#64748b;margin-top:15px;text-align:center">
+Save kottaka data.json download avuthadi.<br>Daanni GitHub lo upload chesi, naku cheppu - nenu main site ki connect chesta.
+</p>
+</div>
+
+<script>
+const MY_PASS = "shiva123"; // Nee password ikkada marchuko
+let data = JSON.parse(localStorage.getItem('shivaPortfolio')) || {
+  about: "I am Shiva Mani, Full Stack Developer",
+  resume: "resume.pdf",
+  projects: []
+};
+
+function login(){
+  if(document.getElementById('pass').value === MY_PASS){
+    document.getElementById('loginBox').classList.add('hidden');
+    document.getElementById('adminBox').classList.remove('hidden');
+    loadData();
+  } else {
+    document.getElementById('err').innerText = "Wrong password bro! Try: shiva123";
+  }
+}
+function logout(){
+  document.getElementById('adminBox').classList.add('hidden');
+  document.getElementById('loginBox').classList.remove('hidden');
+  document.getElementById('pass').value="";
+}
+function loadData(){
+  document.getElementById('about').value = data.about;
+  document.getElementById('resume').value = data.resume;
+  render();
+}
+function render(){
+  let html = "";
+  data.projects.forEach((p,i)=>{
+    html += `<div class="card">
+      <b style="color:#38bdf8">${p.title}</b><br>
+      <span style="font-size:13px;color:#cbd5e1">${p.desc}</span><br>
+      <a href="${p.link}" target="_blank" style="font-size:12px;color:#22c55e">${p.link}</a><br>
+      <button onclick="del(${i})" style="background:#ef4444;width:auto;padding:6px 12px;font-size:12px;margin-top:8px">Delete</button>
+    </div>`;
+  });
+  document.getElementById('projectsList').innerHTML = html || "<p style='color:#64748b'>No projects yet. Add chey bro!</p>";
+  document.getElementById('count').innerText = data.projects.length;
+}
+function addProject(){
+  let t = document.getElementById('pTitle').value.trim();
+  let d = document.getElementById('pDesc').value.trim();
+  let l = document.getElementById('pLink').value.trim();
+  let im = document.getElementById('pImg').value.trim();
+  if(!t) return alert("Title pettu bro!");
+  data.projects.push({title:t, desc:d, link:l, img:im});
+  localStorage.setItem('shivaPortfolio', JSON.stringify(data));
+  render();
+  document.getElementById('pTitle').value="";document.getElementById('pDesc').value="";document.getElementById('pLink').value="";document.getElementById('pImg').value="";
+}
+function del(i){
+  if(confirm("Delete cheyala bro?")){
+    data.projects.splice(i,1);
+    localStorage.setItem('shivaPortfolio', JSON.stringify(data));
+    render();
+  }
+}
+function saveAll(){
+  data.about = document.getElementById('about').value;
+  data.resume = document.getElementById('resume').value;
+  localStorage.setItem('shivaPortfolio', JSON.stringify(data));
+  let blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "data.json";
+  a.click();
+  alert("✅ data.json download ayyindi bro! GitHub lo upload chey!");
+}
+</script>
+</body>
+</html>
