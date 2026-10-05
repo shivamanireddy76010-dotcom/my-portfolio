@@ -1015,36 +1015,32 @@
 
 </script>
 <script>
-// ===== FINAL ADMIN TO WEBSITE CONNECTION =====
-fetch('data.json?v='+Date.now())
-.then(r=>r.json())
-.then(data=>{
-  console.log("Admin connected:", data);
-  
-  // 1. HOME - Tagline
-  if(data.home && data.home.tagline){
-    let hero = document.querySelector('.home-content h1, #home h1, .hero h1');
-    if(hero) hero.innerText = data.home.tagline;
+fetch('data.json?v='+Date.now()).then(r=>r.json()).then(d=>{
+ if(d.home && d.home.tagline){
+  var h1=document.querySelector('#home h1');
+  if(h1) h1.textContent=d.home.tagline;
+ }
+}).catch(()=>{});
+document.addEventListener('click', function(e){
+ if(e.target.closest('a')){
+  var a=e.target.closest('a');
+  var href=a.getAttribute('href');
+  if(href && href.startsWith('#') && href.length>1){
+   e.preventDefault();
+   var sec=document.querySelector(href);
+   if(sec) sec.scrollIntoView({behavior:'smooth'});
   }
-  // 2. HOME - Name
-  if(data.home && data.home.name){
-    document.body.innerHTML = document.body.innerHTML.replaceAll('Gummi Shiva Mani', data.home.name);
-  }
-  // 3. ABOUT
-  if(data.about && data.about.text){
-    let aboutP = document.querySelector('#about .about-content p, #about p');
-    if(aboutP) aboutP.innerText = data.about.text;
-  }
-  // 4. CONTACT
-  if(data.contact){
-    if(data.contact.email){
-      let emailEl = document.querySelector('#contact .email, a[href^="mailto:"]');
-      if(emailEl) emailEl.innerText = data.contact.email;
-    }
-  }
-})
-.catch(e=>console.log("data.json loading...", e));
-// ===== END CONNECTION =====
+ }
+});
+var menuBtn=document.querySelector('.fa-bars');
+var navMenu=document.querySelector('nav ul');
+if(menuBtn && navMenu){
+ menuBtn.style.cursor='pointer';
+ menuBtn.addEventListener('click', function(){
+  navMenu.classList.toggle('active');
+  navMenu.style.display=navMenu.classList.contains('active')?'flex':'';
+ });
+}
 </script>
 </body>
 </html>
